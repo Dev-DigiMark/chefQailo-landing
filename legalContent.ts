@@ -365,19 +365,18 @@ export const legalDocuments: LegalDocument[] = [
     title: 'Delete Account',
     eyebrow: 'Account control',
     summary:
-      'Chef Qailo users can delete their account directly from the app settings. Support is available if account access is unavailable.',
+      'Chef Qailo users can delete their account directly from the app settings. Support is available if the option is unavailable or account access is not possible.',
     sections: [
       {
         title: 'Delete Your Account in the App',
         body: [
-          'Users can delete their account directly from the Chef Qailo app.',
-          'Open the app and go to Profile -> Settings -> Delete Account.',
+          'Users can delete their account directly from Profile -> Settings -> Delete Account.',
         ],
       },
       {
         title: 'If You Cannot Access Your Account',
         body: [
-          'If you cannot access your account, or if the Delete Account option is not visible in the app settings, contact support@chefqailo.com for assistance.',
+          'If you cannot access your account, or if the Delete Account option is not visible in the app settings, contact support@chefqailo.com.',
         ],
       },
       {

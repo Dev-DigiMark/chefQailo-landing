@@ -1280,10 +1280,40 @@ const FAQSection: React.FC = () => {
 
 const Pricing: React.FC = () => {
   const plans: PricingPlan[] = [
-    { name: 'Casual', price: '$0', features: ['AI Chat Advice', '15 Saved Recipes', 'Basic Inventory Sync', 'Standard AI Response'] },
-    { name: 'Enthusiast', price: '$12', features: ['Unlimited Recipes', 'Full Pantry Map', 'Ad-Free Experience', 'Personalized Macros', 'Recipe Scaling'] },
-    { name: 'Master', price: '$24', features: ['Real-time Voice Guidance', '10 Food Photo Analyses/mo', 'Family Kitchen Sync', 'Smart Home Integration', 'Priority AI Engine'], isPopular: true },
-    { name: 'Professional', price: '$59', features: ['Unlimited Visual Analysis', 'Bespoke Sommelier AI', 'Direct Masterclass Stream', 'Custom Nutrition Reports', 'Pro-level Tool Integration'] },
+    {
+      name: 'Freemium',
+      price: 'Free',
+      quota: '150 Q',
+      chat: '~115 messages',
+      realtime: '~6 min',
+      freeMix: 'Yes',
+      monthlyReset: 'No',
+      topUp: 'Yes',
+      storeId: 'Not applicable',
+    },
+    {
+      name: 'Standard',
+      price: '€9.99/mo',
+      quota: '4,000 Q',
+      chat: '~2,318 messages',
+      realtime: '~133 min',
+      freeMix: 'Yes',
+      monthlyReset: '1st of month',
+      topUp: 'Yes',
+      storeId: 'standard',
+    },
+    {
+      name: 'Premium',
+      price: '€17.99/mo',
+      quota: '8,000 Q',
+      chat: '~4,636 messages',
+      realtime: '~266 min',
+      freeMix: 'Yes',
+      monthlyReset: '1st of month',
+      topUp: 'Yes',
+      storeId: 'premium',
+      isPopular: true,
+    },
   ];
 
   return (
@@ -1307,7 +1337,7 @@ const Pricing: React.FC = () => {
           </RevealOnScroll>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {plans.map((plan, idx) => (
             <RevealOnScroll key={plan.name} delay={`${idx * 0.1}s`}>
               <div className={`group h-full relative p-12 rounded-[4rem] transition-all duration-700 flex flex-col ${plan.isPopular
@@ -1321,34 +1351,31 @@ const Pricing: React.FC = () => {
                   </div>
                 )}
 
-                <div className="mb-12">
+                <div className="mb-10">
                   <h4 className={`text-sm font-display font-bold uppercase tracking-[0.2em] mb-6 transition-colors duration-500 ${plan.isPopular ? 'text-primary' : 'text-gray-400 dark:text-white/20'}`}>
                     {plan.name}
                   </h4>
-                  <div className="flex items-baseline gap-1">
+                  <div className="flex items-baseline">
                     <span className="text-5xl font-display font-bold text-gray-900 dark:text-white">{plan.price}</span>
-                    <span className="text-gray-400 dark:text-white/30 font-medium text-sm">/mo</span>
                   </div>
                 </div>
 
-                <div className="space-y-6 mb-16 flex-1">
-                  {plan.features.map((feat) => (
-                    <div key={feat} className="flex items-start gap-4 text-sm text-gray-600 dark:text-gray-300 font-medium group-hover:translate-x-2 transition-transform duration-500">
-                      <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 ${plan.isPopular ? 'bg-primary text-white' : 'bg-primary/10 text-primary'}`}>
-                        <ICONS.Check />
-                      </div>
-                      <span className="leading-relaxed">{feat}</span>
+                <div className="space-y-4 flex-1">
+                  {[
+                    ['Quota', plan.quota],
+                    ['Chat (Indicative)', plan.chat],
+                    ['Realtime (Indicative)', plan.realtime],
+                    ['Free Mix', plan.freeMix],
+                    ['Monthly Reset', plan.monthlyReset],
+                    ['Top-up Available', plan.topUp],
+                    ['Store ID', plan.storeId],
+                  ].map(([label, value]) => (
+                    <div key={label} className="flex items-start justify-between gap-4 rounded-2xl bg-gray-50/80 dark:bg-white/5 px-4 py-3">
+                      <span className="text-xs font-bold uppercase tracking-widest text-gray-400 leading-relaxed">{label}</span>
+                      <span className="text-sm font-bold text-gray-800 dark:text-white text-right leading-relaxed">{value}</span>
                     </div>
                   ))}
                 </div>
-
-                <button className={`w-full py-6 rounded-[2.5rem] font-bold transition-all duration-500 active:scale-95 text-base flex items-center justify-center gap-2 group/btn ${plan.isPopular
-                    ? 'bg-primary text-white hover:bg-opacity-95 shadow-xl shadow-primary/30'
-                    : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:scale-[1.05]'
-                  }`}>
-                  Select {plan.name}
-                  <svg className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                </button>
               </div>
             </RevealOnScroll>
           ))}

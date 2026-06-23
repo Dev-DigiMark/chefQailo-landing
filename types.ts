@@ -11,7 +11,13 @@ export interface FeatureCard {
 export interface PricingPlan {
   name: string;
   price: string;
-  features: string[];
+  quota: string;
+  chat: string;
+  realtime: string;
+  freeMix: string;
+  monthlyReset: string;
+  topUp: string;
+  storeId: string;
   isPopular?: boolean;
 }
 
