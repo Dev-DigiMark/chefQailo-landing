@@ -3,6 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ICONS } from './constants.tsx';
 import { chatWithChef, analyzeFoodImage } from './geminiService.ts';
 import { FeatureCard, PricingPlan, NavItem, Message } from './types.ts';
+import { companyInformation, legalDocuments, legalLastUpdated, LegalDocument } from './legalContent.ts';
+
+const legalSlugs = new Set(legalDocuments.map((document) => document.slug));
 
 // --- Intersection Observer Component ---
 const RevealOnScroll: React.FC<{ children: React.ReactNode; delay?: string }> = ({ children, delay = "0s" }) => {
@@ -577,7 +580,7 @@ const FuturisticModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ i
 
 // --- Main Components ---
 
-const Navbar: React.FC<{ isDark: boolean; toggleDark: () => void; onGetApp: () => void }> = ({ isDark, toggleDark, onGetApp }) => {
+const Navbar: React.FC<{ isDark: boolean; toggleDark: () => void; onGetApp: () => void; onHome: () => void }> = ({ isDark, toggleDark, onGetApp, onHome }) => {
   const navItems: NavItem[] = [
     { label: 'Features', href: '#features' },
     { label: 'How it Works', href: '#how-it-works' },
@@ -587,7 +590,7 @@ const Navbar: React.FC<{ isDark: boolean; toggleDark: () => void; onGetApp: () =
 
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl glass rounded-[2rem] px-8 py-4 shadow-xl border border-white/20 dark:border-white/5 animate-fade-in flex items-center justify-between">
-      <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+      <div className="flex items-center gap-3 cursor-pointer group" onClick={onHome}>
         <img src="/logo.png" alt="Chef Qailo Logo" className="h-10 w-auto object-contain group-hover:scale-110 transition-transform duration-300" referrerPolicy="no-referrer" />
         <span className="text-xl font-display font-bold text-gray-900 dark:text-white tracking-tight group-hover:text-primary transition-colors">
           Chef <span className="text-primary italic">Qailo</span>
@@ -1355,6 +1358,106 @@ const Pricing: React.FC = () => {
   );
 };
 
+const LegalPage: React.FC<{ document: LegalDocument }> = ({ document }) => (
+  <main className="pt-44 pb-24 px-6 bg-cream/60 dark:bg-dark-bg min-h-screen">
+    <div className="max-w-7xl mx-auto">
+      <div className="grid lg:grid-cols-[300px_1fr] gap-10 items-start">
+        <aside className="lg:sticky lg:top-32 space-y-6">
+          <div className="rounded-[2rem] bg-white dark:bg-dark-card border border-gray-100 dark:border-white/10 p-6 shadow-xl shadow-primary/5">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-4">Legal Pack</p>
+            <div className="space-y-2">
+              {legalDocuments.map((item) => (
+                <a
+                  key={item.slug}
+                  href={`#${item.slug}`}
+                  className={`block rounded-2xl px-4 py-3 text-sm font-bold transition-colors ${item.slug === document.slug
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary'
+                    }`}
+                >
+                  {item.title}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] bg-gray-900 dark:bg-black text-white p-6">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Need help?</p>
+            <p className="text-sm text-gray-300 leading-relaxed mb-4">
+              For privacy, legal or billing questions, contact Chef Qailo support.
+            </p>
+            <a href="mailto:support@chefqailo.com" className="text-sm font-bold text-white hover:text-primary transition-colors">
+              support@chefqailo.com
+            </a>
+          </div>
+        </aside>
+
+        <article className="bg-white dark:bg-dark-card border border-gray-100 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/5">
+          <header className="p-8 md:p-12 border-b border-gray-100 dark:border-white/10 bg-white dark:bg-dark-card">
+            <p className="text-sm font-bold text-primary uppercase tracking-widest mb-4">{document.eyebrow}</p>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-gray-900 dark:text-white leading-tight mb-6">
+              {document.title}
+            </h1>
+            <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 leading-relaxed max-w-3xl">
+              {document.summary}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3 text-sm font-bold text-gray-500 dark:text-gray-400">
+              <span className="px-4 py-2 rounded-full bg-primary/10 text-primary">Publication version</span>
+              <span className="px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5">Last updated: {legalLastUpdated}</span>
+            </div>
+          </header>
+
+          <div className="p-8 md:p-12 space-y-10">
+            {document.sections.map((section, index) => (
+              <section key={section.title} className="grid md:grid-cols-[72px_1fr] gap-5">
+                <div className="hidden md:block">
+                  <span className="inline-flex w-12 h-12 rounded-2xl bg-primary/10 text-primary items-center justify-center font-display font-bold">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
+                <div className="space-y-4">
+                  <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 dark:text-white">
+                    {section.title}
+                  </h2>
+                  {section.body?.map((paragraph) => (
+                    <p key={paragraph} className="text-gray-600 dark:text-gray-300 leading-8 font-medium">
+                      {paragraph}
+                    </p>
+                  ))}
+                  {section.bullets && (
+                    <ul className="space-y-3">
+                      {section.bullets.map((bullet) => (
+                        <li key={bullet} className="flex gap-3 text-gray-600 dark:text-gray-300 leading-7 font-medium">
+                          <span className="mt-2.5 h-2 w-2 rounded-full bg-primary flex-shrink-0"></span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </section>
+            ))}
+
+            <section className="mt-14 rounded-[2rem] bg-cream dark:bg-white/5 border border-primary/10 p-6 md:p-8">
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 dark:text-white mb-6">
+                Company Information and Contact
+              </h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                {companyInformation.map((item) => (
+                  <div key={item.label} className="rounded-2xl bg-white/70 dark:bg-black/20 border border-white/70 dark:border-white/10 p-4">
+                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">{item.label}</p>
+                    <p className="text-gray-900 dark:text-white font-bold break-words">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+);
+
 const Footer: React.FC = () => (
   <footer className="bg-gray-900 dark:bg-black text-white pt-20 pb-10 px-6">
     <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12 mb-16">
@@ -1368,9 +1471,33 @@ const Footer: React.FC = () => (
           </p>
         </div>
       </RevealOnScroll>
+      <div>
+        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-5">Legal</h3>
+        <div className="space-y-3">
+          {legalDocuments.map((document) => (
+            <a
+              key={document.slug}
+              href={`#${document.slug}`}
+              className="block text-sm font-semibold text-gray-400 hover:text-primary transition-colors"
+            >
+              {document.title}
+            </a>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-5">Company</h3>
+        <div className="space-y-3 text-sm text-gray-400">
+          <p>SAS SCINTIA</p>
+          <p>3 Rue de Geneve, 69006 Lyon, France</p>
+          <a href="mailto:support@chefqailo.com" className="block hover:text-primary transition-colors">
+            support@chefqailo.com
+          </a>
+        </div>
+      </div>
     </div>
     <div className="max-w-7xl mx-auto border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-      <p>© 2024 Chef Qailo Inc.</p>
+      <p>&copy; 2026 Chef Qailo. Published by SAS SCINTIA.</p>
     </div>
   </footer>
 );
@@ -1378,6 +1505,8 @@ const Footer: React.FC = () => (
 export default function App() {
   const [isDark, setIsDark] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [route, setRoute] = useState(() => window.location.hash.replace('#', ''));
+  const selectedDocument = legalDocuments.find((document) => document.slug === route);
 
   const toggleDark = () => {
     setIsDark(!isDark);
@@ -1388,11 +1517,39 @@ export default function App() {
     }
   };
 
+  const handleHome = () => {
+    if (window.location.hash) {
+      window.location.hash = '';
+    }
+    setRoute('');
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+  };
+
+  useEffect(() => {
+    const syncRoute = () => setRoute(window.location.hash.replace('#', ''));
+    window.addEventListener('hashchange', syncRoute);
+    return () => window.removeEventListener('hashchange', syncRoute);
+  }, []);
+
+  useEffect(() => {
+    if (selectedDocument) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (route && !legalSlugs.has(route)) {
+      window.setTimeout(() => document.getElementById(route)?.scrollIntoView({ behavior: 'smooth' }), 0);
+    }
+  }, [route, selectedDocument]);
+
   return (
     <div className="min-h-screen selection:bg-primary selection:text-white font-sans overflow-x-hidden transition-colors duration-300">
-      <Navbar isDark={isDark} toggleDark={toggleDark} onGetApp={() => setIsModalOpen(true)} />
+      <Navbar isDark={isDark} toggleDark={toggleDark} onGetApp={() => setIsModalOpen(true)} onHome={handleHome} />
 
-      <main>
+      {selectedDocument ? (
+        <LegalPage document={selectedDocument} />
+      ) : (
+        <main>
         <Hero />
 
         <section id="features" className="py-32 px-6 relative">
@@ -1469,7 +1626,8 @@ export default function App() {
             </div>
           </RevealOnScroll>
         </section>
-      </main>
+        </main>
+      )}
 
       <Footer />
       <FuturisticModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
